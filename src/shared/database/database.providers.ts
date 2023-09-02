@@ -6,7 +6,14 @@ export const databaseProviders = [
     useFactory: async () => {
       const dataSource = dataSourceInstance;
 
-      dataSource.initialize();
+      try {
+        if (!dataSource.isInitialized) {
+          await dataSource.initialize();
+        }
+      } catch (error) {
+        console.error(error?.message);
+      }
+      return dataSource;
     },
   },
 ];

@@ -36,7 +36,7 @@ export class UsersController {
 
     if (!user) throw new Error('User not found');
 
-    return this.usersService.update(updateUserDto);
+    return this.usersService.update({ ...user, ...updateUserDto });
   }
 
   @Delete(':id')
