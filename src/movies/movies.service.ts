@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class MoviesService {
+  constructor(private readonly httpService: HttpService) {}
+
   create(createMovieDto: CreateMovieDto) {
     return 'This action adds a new movie';
   }
 
-  findAll() {
-    return `This action returns all movies`;
+  async findAll() {
+    const { data } = await firstValueFrom(
+      this.httpService.get('/3/discover/movie?language=pt-BR'),
+    );
+    return data;
   }
 
   findOne(id: number) {
