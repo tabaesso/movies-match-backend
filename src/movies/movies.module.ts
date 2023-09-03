@@ -8,7 +8,7 @@ import { HttpModule } from '@nestjs/axios';
     HttpModule.registerAsync({
       useFactory: () => {
         return {
-          baseURL: 'https://api.themoviedb.org',
+          baseURL: process.env.MOVIES_DB_API_BASE_URL,
           headers: {
             accept: 'application/json',
             Authorization: `Bearer ${process.env.MOVIES_DB_API_KEY}`,

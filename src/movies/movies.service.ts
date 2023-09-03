@@ -1,33 +1,133 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Logger, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { CreateMovieDto } from './dto/create-movie.dto';
-import { UpdateMovieDto } from './dto/update-movie.dto';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom } from 'rxjs';
+import { AxiosError } from 'axios';
+import { MEDIA_CATEGORIES, MOVIES_DB_API_NAME } from 'src/constants';
 
 @Injectable()
 export class MoviesService {
+  private readonly logger = new Logger(MoviesService.name);
   constructor(private readonly httpService: HttpService) {}
 
-  create(createMovieDto: CreateMovieDto) {
-    return 'This action adds a new movie';
-  }
+  async findAll(mediaType?: string, genres?: string) {
+    if (!mediaType || !genres) {
+      throw new HttpException(
+        `${MOVIES_DB_API_NAME} - Missing query parameters`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-  async findAll() {
+    if (!Object.values(MEDIA_CATEGORIES).includes(mediaType)) {
+      throw new HttpException(
+        `${MOVIES_DB_API_NAME} - Invalid media type`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const formattedGenres = genres.replace(/,/g, '|');
+
+    // TODO: A kind of mixer to return different movies from different pages and genres
+    const movieEndpoint = `/discover/${mediaType}?include_adult=false&include_video=false&language=pt-BR&page=1&sort_by=popularity.desc&with_genres=${formattedGenres}`;
+
     const { data } = await firstValueFrom(
-      this.httpService.get('/3/discover/movie?language=pt-BR'),
+      this.httpService.get(movieEndpoint).pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data);
+          throw new HttpException(
+            `${MOVIES_DB_API_NAME} - Bad request`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }),
+      ),
     );
     return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} movie`;
+  async findGenres(mediaType?: string) {
+    if (!mediaType) {
+      throw new HttpException(
+        `${MOVIES_DB_API_NAME} - Missing query parameters`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!Object.values(MEDIA_CATEGORIES).includes(mediaType)) {
+      throw new HttpException(
+        `${MOVIES_DB_API_NAME} - Invalid media type`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const { data } = await firstValueFrom(
+      this.httpService.get(`/genre/${mediaType}/list?language=pt-BR`).pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data);
+          throw new HttpException(
+            `${MOVIES_DB_API_NAME} - Bad request`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }),
+      ),
+    );
+    return data;
   }
 
-  update(id: number, updateMovieDto: UpdateMovieDto) {
-    return `This action updates a #${id} movie`;
+  async findStreamings(id: string, mediaType?: string) {
+    if (!mediaType) {
+      throw new HttpException(
+        `${MOVIES_DB_API_NAME} - Missing query parameters`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!Object.values(MEDIA_CATEGORIES).includes(mediaType)) {
+      throw new HttpException(
+        `${MOVIES_DB_API_NAME} - Invalid media type`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const { data } = await firstValueFrom(
+      this.httpService.get(`/${mediaType}/${id}/watch/providers`).pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data);
+          throw new HttpException(
+            `${MOVIES_DB_API_NAME} - Bad request`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }),
+      ),
+    );
+    return data;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} movie`;
+  async findOne(id: number, mediaType?: string) {
+    if (!mediaType) {
+      throw new HttpException(
+        `${MOVIES_DB_API_NAME} - Missing query parameters`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!Object.values(MEDIA_CATEGORIES).includes(mediaType)) {
+      throw new HttpException(
+        `${MOVIES_DB_API_NAME} - Invalid media type`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const { data } = await firstValueFrom(
+      this.httpService.get(`/${mediaType}/${id}?language=pt-BR`).pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data);
+          throw new HttpException(
+            `${MOVIES_DB_API_NAME} - Bad request`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }),
+      ),
+    );
+
+    return data;
   }
 }

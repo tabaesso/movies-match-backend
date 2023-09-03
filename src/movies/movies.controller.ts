@@ -1,34 +1,39 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { MoviesService } from './movies.service';
-import { CreateMovieDto } from './dto/create-movie.dto';
-import { UpdateMovieDto } from './dto/update-movie.dto';
 
 @Controller('movies')
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
-  @Post()
-  create(@Body() createMovieDto: CreateMovieDto) {
-    return this.moviesService.create(createMovieDto);
+  @Get()
+  findAll(
+    @Query('mediaType') mediaType?: string,
+    @Query('genres') genres?: string,
+  ) {
+    return this.moviesService.findAll(mediaType, genres);
   }
 
-  @Get()
-  findAll() {
-    return this.moviesService.findAll();
+  @Get('genres')
+  findGenres(@Query('mediaType') mediaType?: string) {
+    return this.moviesService.findGenres(mediaType);
+  }
+
+  @Get(':id/streamings')
+  async findStreamingsByMedia(
+    @Param('id') id: string,
+    @Query('mediaType') mediaType?: string,
+  ) {
+    const watchProviders = await this.moviesService.findStreamings(
+      id,
+      mediaType,
+    );
+
+    const brazilianProviders = watchProviders?.results?.BR?.flatrate || [];
+    return brazilianProviders;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.moviesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMovieDto: UpdateMovieDto) {
-    return this.moviesService.update(+id, updateMovieDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.moviesService.remove(+id);
+  findOne(@Param('id') id: string, @Query('mediaType') mediaType?: string) {
+    return this.moviesService.findOne(+id, mediaType);
   }
 }

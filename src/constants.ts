@@ -1,9 +1,5 @@
-export const DATABASE_SOURCE = 'DATABASE_SOURCE';
-export const REPOSITORIES = {
-  USERS: 'USERS_REPOSITORY',
-  SESSIONS: 'SESSIONS_REPOSITORY',
-};
+export const MOVIES_DB_API_NAME = 'themoviedb API';
 export const MEDIA_CATEGORIES = {
-  MOVIES: 'MOVIES',
-  SERIES: 'SERIES',
+  MOVIES: 'movie',
+  SERIES: 'tv',
 };
