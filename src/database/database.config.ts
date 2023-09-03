@@ -1,6 +1,4 @@
-import { DataSource } from 'typeorm';
-// import { ConfigService } from '@nestjs/config';
-
+import { DataSource, DataSourceOptions } from 'typeorm';
 // const configService = new ConfigService();
 
 // export const dataSourceInstance = new DataSource({
@@ -15,14 +13,16 @@ import { DataSource } from 'typeorm';
 //   synchronize: false,
 // });
 
-export const dataSourceInstance = new DataSource({
+export const databaseConfig: DataSourceOptions = {
   type: 'postgres',
   host: `localhost`,
   port: 5432,
   username: `postgres`,
   password: `postgres`,
   database: `postgres`,
-  entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
+  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../**/migrations/*{.ts,.js}'],
   synchronize: false,
-});
+};
+
+export const databaseInstance = new DataSource(databaseConfig);

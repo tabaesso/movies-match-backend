@@ -4,14 +4,12 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { MoviesModule } from './movies/movies.module';
-import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { databaseConfig } from './database/database.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-    }),
+    TypeOrmModule.forRoot(databaseConfig),
     UsersModule,
     SessionsModule,
     MoviesModule,
