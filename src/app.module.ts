@@ -7,6 +7,7 @@ import { MoviesModule } from './movies/movies.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from './database/database.config';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     SessionsModule,
     MoviesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
