@@ -1,1 +1,4 @@
-export class CreateSessionDto {}
+export class CreateSessionDto {
+  name: string;
+  category: string;
+}
