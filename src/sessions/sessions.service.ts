@@ -13,7 +13,7 @@ export class SessionsService {
   ) {}
 
   create(createSessionDto: CreateSessionDto) {
-    return this.sessionsRepository.save(createSessionDto);
+    return this.sessionsRepository.save({ isOpen: true, ...createSessionDto });
   }
 
   findAll() {
