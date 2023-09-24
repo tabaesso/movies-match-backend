@@ -2,7 +2,7 @@ import { HttpException, Injectable, Logger, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
-import { MEDIA_CATEGORIES, MOVIES_DB_API_NAME } from 'src/constants';
+import { MEDIA_CATEGORIES, MOVIES_DB_API_NAME } from '../constants';
 
 @Injectable()
 export class MoviesService {

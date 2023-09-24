@@ -31,4 +31,23 @@ export class SessionsService {
   remove(session: Session) {
     return this.sessionsRepository.remove(session);
   }
+
+  // Refactor to a different session service, like SessionUsersService
+  addUser(id: string, userId: string) {
+    return this.sessionsRepository.findOne({ where: { id } });
+  }
+
+  removeUser(id: string, userId: string) {
+    return this.sessionsRepository.findOne({ where: { id } });
+  }
+
+  // Refactor to a different session service, like SessionGenresService
+  addGenres(id: string, genres: number[]) {
+    return this.sessionsRepository.findOne({ where: { id } });
+  }
+
+  // Refactor to a different session service, like SessionVotesService
+  addVote(id: string, movieId: string) {
+    return this.sessionsRepository.findOne({ where: { id } });
+  }
 }
