@@ -12,6 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { EventsModule } from './events/events.module';
 import { SessionGenresModule } from './session-genres/session-genres.module';
+import { SessionVotesModule } from './session-votes/session-votes.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SessionGenresModule } from './session-genres/session-genres.module';
     AuthModule,
     EventsModule,
     SessionGenresModule,
+    SessionVotesModule,
   ],
   controllers: [AppController],
   providers: [

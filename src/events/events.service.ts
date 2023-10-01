@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MoviesService } from '../movies/movies.service';
 import { SessionsService } from '../sessions/sessions.service';
-import { SessionGenresService } from 'src/session-genres/session-genres.service';
+import { SessionGenresService } from '../session-genres/session-genres.service';
+import { SessionVotesService } from '../session-votes/session-votes.service';
 
 @Injectable()
 export class EventsService {
@@ -9,6 +10,7 @@ export class EventsService {
     private sessionsService: SessionsService,
     private moviesService: MoviesService,
     private sessionGenresService: SessionGenresService,
+    private sessionVotesService: SessionVotesService,
   ) {}
   private readonly logger = new Logger(EventsService.name);
 
@@ -62,7 +64,7 @@ export class EventsService {
         throw new Error('Session not found');
       }
 
-      return this.sessionsService.addVote(sessionId, movieId);
+      return this.sessionVotesService.create({ sessionId, movieId });
     } catch (error) {
       this.logger.error(error);
       throw new Error('Something went wrong with this session');
@@ -70,11 +72,11 @@ export class EventsService {
   }
 
   async getVotes({ sessionId }) {
+    const sessionVotes = this.sessionVotesService.findBySession(sessionId);
     return { votes: [], update: true };
   }
 
   async chosenMovie({ sessionId, movieId }) {
-
     const movie = await this.moviesService.findOne(movieId);
 
     return { id: '123', title: 'Movie 1', overview: 'Overview 1' };
