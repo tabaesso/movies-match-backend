@@ -22,13 +22,28 @@ export class EventsService {
 
       if (!findSession) {
         this.logger.error('Session not found');
-        throw new Error('Session not found');
       }
 
       await this.sessionMembersService.create({ sessionId, userId });
     } catch (error) {
       this.logger.error(error);
-      throw new Error('Something went wrong with this session');
+    }
+  }
+
+  async disconnectMemberFromSession({ sessionId, userId }) {
+    try {
+      const foundSessionMember = await this.sessionMembersService.findOne(
+        sessionId,
+        userId,
+      );
+
+      if (!foundSessionMember) {
+        this.logger.error('Session member not found');
+      }
+
+      await this.sessionMembersService.remove(foundSessionMember);
+    } catch (error) {
+      this.logger.error(error);
     }
   }
 
@@ -38,24 +53,29 @@ export class EventsService {
 
       if (!findSession) {
         this.logger.error('Session not found');
-        throw new Error('Session not found');
       }
 
       return this.sessionGenresService.create({ sessionId, genres });
     } catch (error) {
       this.logger.error(error);
-      throw new Error('Something went wrong with this session');
     }
   }
 
   async sortMoviesByGenres({ sessionId }) {
-    // get genres from session
-    const sessionGenres = this.sessionGenresService.findBySession(sessionId);
-    // get session members
-    const sessionMembers = this.sessionMembersService.findBySession(sessionId);
-    // se retornar o nr de registros de filmes igual ao nr de usuarios da sessão, setar a flag update para true
+    const sessionGenres =
+      await this.sessionGenresService.findBySession(sessionId);
+
+    const sessionMembers =
+      await this.sessionMembersService.findBySession(sessionId);
+
+    // that means that all connected users have selected their movie genres
+    if (sessionGenres.length === sessionMembers.length) {
+      // get movies from api based on genres from that session
+      return { movies: [], update: true };
+    }
+
     // get movies from api based on genres from that session
-    return { movies: [], update: true };
+    return { movies: [], update: false };
   }
 
   async addSessionVote({ sessionId, movieId }) {
@@ -64,13 +84,11 @@ export class EventsService {
 
       if (!findSession) {
         this.logger.error('Session not found');
-        throw new Error('Session not found');
       }
 
       return this.sessionVotesService.create({ sessionId, movieId });
     } catch (error) {
       this.logger.error(error);
-      throw new Error('Something went wrong with this session');
     }
   }
 

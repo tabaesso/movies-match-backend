@@ -20,9 +20,6 @@ export class Session {
   @Column()
   category: string;
 
-  @Column('int', { array: true, nullable: true })
-  genres: number[];
-
   @CreateDateColumn()
   created_at: Date;
 

@@ -23,12 +23,27 @@ export class EventsGateway {
     const userId = getWSParams(message.url, 1);
 
     client.sessionId = sessionId;
+    client.userId = userId;
 
     this.logger.debug(
-      `Client connected: Session ${client.sessionId} - User ${userId}`,
+      `Client connected: Session ${client.sessionId} - User ${client.userId}`,
     );
 
     await this.eventsService.joinSession({ sessionId, userId });
+  }
+
+  // note: websocket don't call async method so I'm using then/catch
+  handleDisconnect(client: any) {
+    const { sessionId, userId } = client;
+
+    this.eventsService
+      .disconnectMemberFromSession({ sessionId, userId })
+      .then(() => {
+        this.logger.debug(`Client disconnected: ${userId}`);
+      })
+      .catch((error) => {
+        this.logger.error(error);
+      });
   }
 
   sendUpdateToClients(sessionId: string, updateData: any) {

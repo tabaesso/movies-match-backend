@@ -1,14 +1,14 @@
 <html>
   <head>
     <script>
-      const socket = new WebSocket('ws://localhost:3000/?sessionId=1478e7fb-4da7-4d63-b2ee-de1120c16877&userId=22bec530-4585-4077-920f-8c84912b7cbb');
+      const socket = new WebSocket('ws://127.0.0.1:3000/?sessionId=9495dd41-f5fc-46de-8115-685874f00972&userId=a372c63f-0ab5-45ef-96b6-8841ec04baa1');
       socket.onopen = function() {
         console.log('Connected');
         socket.send(
           JSON.stringify({
             event: 'sort_movies_event',
             data: {
-              sessionId: '1478e7fb-4da7-4d63-b2ee-de1120c16877',
+              sessionId: '9495dd41-f5fc-46de-8115-685874f00972',
             },
           }),
         );

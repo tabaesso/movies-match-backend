@@ -24,6 +24,16 @@ export class SessionMembersService {
     });
   }
 
+  findOne(sessionId: string, userId: string) {
+    return this.sessionMembersRepository.findOne({
+      where: {
+        session_id: sessionId,
+        user_id: userId,
+        is_connected: true,
+      },
+    });
+  }
+
   remove(sessionMember: SessionMembers) {
     return this.sessionMembersRepository.remove(sessionMember);
   }
