@@ -3,6 +3,7 @@ import { MoviesService } from '../movies/movies.service';
 import { SessionsService } from '../sessions/sessions.service';
 import { SessionGenresService } from '../session-genres/session-genres.service';
 import { SessionVotesService } from '../session-votes/session-votes.service';
+import { SessionMembersService } from '../session-members/session-members.service';
 
 @Injectable()
 export class EventsService {
@@ -11,6 +12,7 @@ export class EventsService {
     private moviesService: MoviesService,
     private sessionGenresService: SessionGenresService,
     private sessionVotesService: SessionVotesService,
+    private sessionMembersService: SessionMembersService,
   ) {}
   private readonly logger = new Logger(EventsService.name);
 
@@ -23,7 +25,7 @@ export class EventsService {
         throw new Error('Session not found');
       }
 
-      await this.sessionsService.addUser(sessionId, userId);
+      await this.sessionMembersService.create({ sessionId, userId });
     } catch (error) {
       this.logger.error(error);
       throw new Error('Something went wrong with this session');
@@ -50,6 +52,7 @@ export class EventsService {
     // get genres from session
     const sessionGenres = this.sessionGenresService.findBySession(sessionId);
     // get session members
+    const sessionMembers = this.sessionMembersService.findBySession(sessionId);
     // se retornar o nr de registros de filmes igual ao nr de usuarios da sessão, setar a flag update para true
     // get movies from api based on genres from that session
     return { movies: [], update: true };

@@ -31,13 +31,4 @@ export class SessionsService {
   remove(session: Session) {
     return this.sessionsRepository.remove(session);
   }
-
-  // Refactor to a different session service, like SessionUsersService
-  addUser(id: string, userId: string) {
-    return this.sessionsRepository.findOne({ where: { id } });
-  }
-
-  removeUser(id: string, userId: string) {
-    return this.sessionsRepository.findOne({ where: { id } });
-  }
 }

@@ -13,6 +13,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { EventsModule } from './events/events.module';
 import { SessionGenresModule } from './session-genres/session-genres.module';
 import { SessionVotesModule } from './session-votes/session-votes.module';
+import { SessionMembersModule } from './session-members/session-members.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SessionVotesModule } from './session-votes/session-votes.module';
     EventsModule,
     SessionGenresModule,
     SessionVotesModule,
+    SessionMembersModule,
   ],
   controllers: [AppController],
   providers: [

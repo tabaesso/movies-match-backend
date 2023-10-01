@@ -5,6 +5,7 @@ import { SessionsModule } from '../sessions/sessions.module';
 import { MoviesModule } from '../movies/movies.module';
 import { SessionGenresModule } from '../session-genres/session-genres.module';
 import { SessionVotesModule } from '../session-votes/session-votes.module';
+import { SessionMembersModule } from 'src/session-members/session-members.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { SessionVotesModule } from '../session-votes/session-votes.module';
     MoviesModule,
     SessionGenresModule,
     SessionVotesModule,
+    SessionMembersModule,
   ],
   providers: [EventsGateway, EventsService],
 })
