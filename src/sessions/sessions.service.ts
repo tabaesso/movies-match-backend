@@ -41,11 +41,6 @@ export class SessionsService {
     return this.sessionsRepository.findOne({ where: { id } });
   }
 
-  // Refactor to a different session service, like SessionGenresService
-  addGenres(id: string, genres: number[]) {
-    return this.sessionsRepository.findOne({ where: { id } });
-  }
-
   // Refactor to a different session service, like SessionVotesService
   addVote(id: string, movieId: string) {
     return this.sessionsRepository.findOne({ where: { id } });

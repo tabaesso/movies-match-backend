@@ -32,7 +32,7 @@ export class EventsGateway {
   }
 
   sendUpdateToClients(sessionId: string, updateData: any) {
-    this.server.clients.forEach((client) => {
+    this.server.clients.forEach((client: any) => {
       const clientSessionId = client.sessionId;
       if (clientSessionId === sessionId) {
         client.send(JSON.stringify(updateData));

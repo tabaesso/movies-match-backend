@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { EventsModule } from './events/events.module';
+import { SessionGenresModule } from './session-genres/session-genres.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { EventsModule } from './events/events.module';
     MoviesModule,
     AuthModule,
     EventsModule,
+    SessionGenresModule,
   ],
   controllers: [AppController],
   providers: [

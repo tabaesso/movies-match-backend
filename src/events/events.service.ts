@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MoviesService } from '../movies/movies.service';
 import { SessionsService } from '../sessions/sessions.service';
+import { SessionGenresService } from 'src/session-genres/session-genres.service';
 
 @Injectable()
 export class EventsService {
   constructor(
     private sessionsService: SessionsService,
     private moviesService: MoviesService,
+    private sessionGenresService: SessionGenresService,
   ) {}
   private readonly logger = new Logger(EventsService.name);
 
@@ -35,7 +37,7 @@ export class EventsService {
         throw new Error('Session not found');
       }
 
-      return this.sessionsService.addGenres(sessionId, genres);
+      return this.sessionGenresService.create({ sessionId, genres });
     } catch (error) {
       this.logger.error(error);
       throw new Error('Something went wrong with this session');
@@ -44,6 +46,7 @@ export class EventsService {
 
   async sortMoviesByGenres({ sessionId }) {
     // get genres from session
+    const sessionGenres = this.sessionGenresService.findBySession(sessionId);
     // get session members
     // se retornar o nr de registros de filmes igual ao nr de usuarios da sessão, setar a flag update para true
     // get movies from api based on genres from that session
