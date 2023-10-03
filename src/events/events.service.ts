@@ -89,6 +89,8 @@ export class EventsService {
     return { movies: [], update: false };
   }
 
+  // TODO: ADD RESTART VOTES EVENT
+
   async addSessionVote({ sessionId, movieId }) {
     try {
       const findSession = await this.sessionsService.findOne(sessionId);
