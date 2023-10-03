@@ -68,13 +68,23 @@ export class EventsService {
     const sessionMembers =
       await this.sessionMembersService.findBySession(sessionId);
 
+    const genres = [];
+    sessionGenres.forEach((sessionGenre) =>
+      genres.push(...sessionGenre.genres),
+    );
+
     // that means that all connected users have selected their movie genres
     if (sessionGenres.length === sessionMembers.length) {
+      const movies = await this.moviesService.findAll(
+        sessionGenres[0].session.category,
+        genres.toString(),
+      );
+
       // get movies from api based on genres from that session
-      return { movies: [], update: true };
+      return { movies, update: true };
     }
 
-    // get movies from api based on genres from that session
+    // not necessary to return movies because not all users have selected their movie genres
     return { movies: [], update: false };
   }
 
@@ -93,13 +103,32 @@ export class EventsService {
   }
 
   async getVotes({ sessionId }) {
-    const sessionVotes = this.sessionVotesService.findBySession(sessionId);
-    return { votes: [], update: true };
+    const sessionVotes =
+      await this.sessionVotesService.findBySession(sessionId);
+
+    const sessionMembers =
+      await this.sessionMembersService.findBySession(sessionId);
+
+    // that means that all connected users have voted
+    if (sessionVotes.length === sessionMembers.length) {
+      return { votes: sessionVotes, update: true };
+    }
+
+    return { votes: sessionVotes, update: false };
   }
 
   async chosenMovie({ sessionId, movieId }) {
     const movie = await this.moviesService.findOne(movieId);
 
-    return { id: '123', title: 'Movie 1', overview: 'Overview 1' };
+    if (!movie) {
+      this.logger.error('Movie not found');
+    }
+
+    const session = await this.sessionsService.findOne(sessionId);
+
+    // update session with chosen movie
+    await this.sessionsService.update({ ...session, movie_id: movieId });
+
+    return movie;
   }
 }

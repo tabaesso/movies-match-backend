@@ -32,7 +32,7 @@ export class EventsGateway {
     await this.eventsService.joinSession({ sessionId, userId });
   }
 
-  // note: websocket don't call async method so I'm using then/catch
+  // note: websocket don't call async methods to disconnect so I'm using then/catch
   handleDisconnect(client: any) {
     const { sessionId, userId } = client;
 

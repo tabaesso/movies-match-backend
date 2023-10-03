@@ -20,6 +20,9 @@ export class Session {
   @Column()
   category: string;
 
+  @Column({ nullable: true })
+  movie_id: number;
+
   @CreateDateColumn()
   created_at: Date;
 
