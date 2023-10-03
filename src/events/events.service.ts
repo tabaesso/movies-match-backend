@@ -61,7 +61,7 @@ export class EventsService {
     }
   }
 
-  async sortMoviesByGenres({ sessionId }) {
+  async sortMoviesByGenres({ sessionId, page }) {
     const sessionGenres =
       await this.sessionGenresService.findBySession(sessionId);
 
@@ -78,6 +78,7 @@ export class EventsService {
       const movies = await this.moviesService.findAll(
         sessionGenres[0].session.category,
         genres.toString(),
+        page,
       );
 
       // get movies from api based on genres from that session

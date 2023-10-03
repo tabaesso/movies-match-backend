@@ -57,7 +57,7 @@ export class EventsGateway {
 
   @SubscribeMessage(EventTypes.SORT_MOVIES_EVENT)
   async onSort(client: any, data: any): Promise<WsResponse<any>> {
-    const { sessionId, genres } = data;
+    const { sessionId, genres, page } = data;
 
     await this.eventsService.addSessionGenres({
       sessionId,
@@ -66,6 +66,7 @@ export class EventsGateway {
 
     const { movies, update } = await this.eventsService.sortMoviesByGenres({
       sessionId,
+      page,
     });
 
     if (update) {

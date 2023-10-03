@@ -9,8 +9,9 @@ export class MoviesController {
   findAll(
     @Query('mediaType') mediaType?: string,
     @Query('genres') genres?: string,
+    @Query('page') page?: string,
   ) {
-    return this.moviesService.findAll(mediaType, genres);
+    return this.moviesService.findAll(mediaType, genres, page);
   }
 
   @Get('genres')

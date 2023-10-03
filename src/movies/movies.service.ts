@@ -9,7 +9,7 @@ export class MoviesService {
   private readonly logger = new Logger(MoviesService.name);
   constructor(private readonly httpService: HttpService) {}
 
-  async findAll(mediaType?: string, genres?: string) {
+  async findAll(mediaType?: string, genres?: string, page = '1') {
     if (!mediaType || !genres) {
       throw new HttpException(
         `${MOVIES_DB_API_NAME} - Missing query parameters`,
@@ -27,7 +27,7 @@ export class MoviesService {
     const formattedGenres = genres.replace(/,/g, '|');
 
     // TODO: A kind of mixer to return different movies from different pages and genres
-    const movieEndpoint = `/discover/${mediaType}?include_adult=false&include_video=false&language=pt-BR&page=1&sort_by=popularity.desc&with_genres=${formattedGenres}`;
+    const movieEndpoint = `/discover/${mediaType}?include_adult=false&include_video=false&language=pt-BR&page=${page}&sort_by=popularity.desc&with_genres=${formattedGenres}`;
 
     const { data } = await firstValueFrom(
       this.httpService.get(movieEndpoint).pipe(
