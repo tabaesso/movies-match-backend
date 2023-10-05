@@ -24,7 +24,7 @@ export class EventsService {
         this.logger.error('Session not found');
       }
 
-      await this.sessionMembersService.create({ sessionId, userId });
+      return this.sessionMembersService.create({ sessionId, userId });
     } catch (error) {
       this.logger.error(error);
     }
@@ -42,6 +42,24 @@ export class EventsService {
       }
 
       await this.sessionMembersService.remove(foundSessionMember);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  async startSession(sessionId) {
+    try {
+      const findSession = await this.sessionsService.findOne(sessionId);
+
+      if (!findSession) {
+        this.logger.error('Session not found');
+      }
+
+      if (findSession.started) {
+        return undefined;
+      }
+
+      return this.sessionsService.update({ ...findSession, started: true });
     } catch (error) {
       this.logger.error(error);
     }

@@ -23,6 +23,9 @@ export class Session {
   @Column({ nullable: true })
   movie_id: number;
 
+  @Column({ nullable: true, default: false })
+  started: boolean;
+
   @CreateDateColumn()
   created_at: Date;
 

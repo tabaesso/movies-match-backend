@@ -29,7 +29,15 @@ export class EventsGateway {
       `Client connected: Session ${client.sessionId} - User ${client.userId}`,
     );
 
-    await this.eventsService.joinSession({ sessionId, userId });
+    const userMember = await this.eventsService.joinSession({
+      sessionId,
+      userId,
+    });
+
+    this.sendUpdateToClients(sessionId, {
+      event: EventTypes.JOIN_SESSION,
+      data: userMember,
+    });
   }
 
   // note: websocket don't call async methods to disconnect so I'm using then/catch
@@ -52,6 +60,20 @@ export class EventsGateway {
       if (clientSessionId === sessionId) {
         client.send(JSON.stringify(updateData));
       }
+    });
+  }
+
+  @SubscribeMessage(EventTypes.START_SESSION)
+  async startSession(client: any, data: any): Promise<void> {
+    const { sessionId } = data;
+
+    const session = await this.eventsService.startSession(sessionId);
+
+    if (!session) return;
+
+    this.sendUpdateToClients(sessionId, {
+      event: EventTypes.START_SESSION,
+      data: session,
     });
   }
 
