@@ -24,7 +24,16 @@ export class EventsService {
         this.logger.error('Session not found');
       }
 
-      return this.sessionMembersService.create({ sessionId, userId });
+      const foundSessionMember = await this.sessionMembersService.findOne(
+        sessionId,
+        userId,
+      );
+
+      if (!foundSessionMember) {
+        return this.sessionMembersService.create({ sessionId, userId });
+      }
+
+      return foundSessionMember;
     } catch (error) {
       this.logger.error(error);
     }
@@ -80,6 +89,12 @@ export class EventsService {
   }
 
   async sortMoviesByGenres({ sessionId, page }) {
+    const findSession = await this.sessionsService.findOne(sessionId);
+
+    if (!findSession) {
+      this.logger.error('Session not found');
+    }
+
     const sessionGenres =
       await this.sessionGenresService.findBySession(sessionId);
 
@@ -94,7 +109,7 @@ export class EventsService {
     // that means that all connected users have selected their movie genres
     if (sessionGenres.length === sessionMembers.length) {
       const movies = await this.moviesService.findAll(
-        sessionGenres[0].session.category,
+        findSession.category,
         genres.toString(),
         page,
       );

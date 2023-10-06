@@ -99,11 +99,6 @@ export class EventsGateway {
 
       return;
     }
-
-    return {
-      event: EventTypes.SORT_MOVIES_EVENT,
-      data: movies,
-    };
   }
 
   @SubscribeMessage(EventTypes.VOTED_MOVIE_EVENT)
