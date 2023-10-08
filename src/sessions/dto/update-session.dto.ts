@@ -4,4 +4,5 @@ import { CreateSessionDto } from './create-session.dto';
 export class UpdateSessionDto extends PartialType(CreateSessionDto) {
   movie_id?: number;
   started?: boolean;
+  isOpen?: boolean;
 }

@@ -4,6 +4,7 @@ import { SessionsService } from '../sessions/sessions.service';
 import { SessionGenresService } from '../session-genres/session-genres.service';
 import { SessionVotesService } from '../session-votes/session-votes.service';
 import { SessionMembersService } from '../session-members/session-members.service';
+import * as _ from 'lodash';
 
 @Injectable()
 export class EventsService {
@@ -29,7 +30,7 @@ export class EventsService {
         userId,
       );
 
-      if (!foundSessionMember) {
+      if (!foundSessionMember && findSession.isOpen) {
         return this.sessionMembersService.create({ sessionId, userId });
       }
 
@@ -47,7 +48,7 @@ export class EventsService {
       );
 
       if (!foundSessionMember) {
-        this.logger.error('Session member not found');
+        return;
       }
 
       await this.sessionMembersService.remove(foundSessionMember);
@@ -64,11 +65,11 @@ export class EventsService {
         this.logger.error('Session not found');
       }
 
-      if (findSession.started) {
-        return undefined;
-      }
-
-      return this.sessionsService.update({ ...findSession, started: true });
+      return this.sessionsService.update({
+        ...findSession,
+        started: true,
+        isOpen: false,
+      });
     } catch (error) {
       this.logger.error(error);
     }
@@ -110,7 +111,7 @@ export class EventsService {
     if (sessionGenres.length === sessionMembers.length) {
       const movies = await this.moviesService.findAll(
         findSession.category,
-        genres.toString(),
+        _.uniq(genres).toString(),
         page,
       );
 
@@ -145,26 +146,40 @@ export class EventsService {
     const sessionMembers =
       await this.sessionMembersService.findBySession(sessionId);
 
+    const countedVotes = _.countBy(sessionVotes, 'movie_id');
+
+    const formattedVotes = [];
+    sessionVotes.forEach((vote) =>
+      formattedVotes.push({
+        movieId: vote.movie_id,
+        votes: countedVotes[vote.movie_id],
+      }),
+    );
+
     // that means that all connected users have voted
     if (sessionVotes.length === sessionMembers.length) {
-      return { votes: sessionVotes, update: true };
+      return { votes: formattedVotes, update: true };
     }
 
-    return { votes: sessionVotes, update: false };
+    return { votes: formattedVotes, update: false };
   }
 
-  async chosenMovie({ sessionId, movieId }) {
-    const movie = await this.moviesService.findOne(movieId);
+  async chosenMovie({ sessionId, votes }) {
+    const votesMovieIds = votes.map((vote) => vote.movieId);
 
-    if (!movie) {
-      this.logger.error('Movie not found');
+    const unformattedMovieId = _.head(
+      _(votesMovieIds).countBy().entries().maxBy(_.last),
+    );
+
+    if (!unformattedMovieId) {
+      this.logger.error('No votes');
     }
+
+    const movieId = Number(unformattedMovieId);
 
     const session = await this.sessionsService.findOne(sessionId);
 
     // update session with chosen movie
     await this.sessionsService.update({ ...session, movie_id: movieId });
-
-    return movie;
   }
 }

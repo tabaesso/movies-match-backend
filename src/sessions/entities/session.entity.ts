@@ -1,7 +1,10 @@
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -25,6 +28,13 @@ export class Session {
 
   @Column({ nullable: true, default: false })
   started: boolean;
+
+  @Column({ nullable: true })
+  owner: string;
+
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: 'owner' })
+  user: User;
 
   @CreateDateColumn()
   created_at: Date;

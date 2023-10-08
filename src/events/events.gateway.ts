@@ -18,7 +18,7 @@ export class EventsGateway {
   @WebSocketServer()
   server: Server;
 
-  async handleConnection(client: any, message: any) {
+  handleConnection(client: any, message: any) {
     const sessionId = getWSParams(message.url, 0);
     const userId = getWSParams(message.url, 1);
 
@@ -29,15 +29,20 @@ export class EventsGateway {
       `Client connected: Session ${client.sessionId} - User ${client.userId}`,
     );
 
-    const userMember = await this.eventsService.joinSession({
-      sessionId,
-      userId,
-    });
-
-    this.sendUpdateToClients(sessionId, {
-      event: EventTypes.JOIN_SESSION,
-      data: userMember,
-    });
+    this.eventsService
+      .joinSession({
+        sessionId,
+        userId,
+      })
+      .then((userMember) => {
+        this.sendUpdateToClients(sessionId, {
+          event: EventTypes.JOIN_SESSION,
+          data: userMember,
+        });
+      })
+      .catch((error) => {
+        this.logger.error(error);
+      });
   }
 
   // note: websocket don't call async methods to disconnect so I'm using then/catch
@@ -68,8 +73,6 @@ export class EventsGateway {
     const { sessionId } = data;
 
     const session = await this.eventsService.startSession(sessionId);
-
-    if (!session) return;
 
     this.sendUpdateToClients(sessionId, {
       event: EventTypes.START_SESSION,
@@ -110,32 +113,22 @@ export class EventsGateway {
     const { votes, update } = await this.eventsService.getVotes({ sessionId });
 
     if (update) {
+      await this.eventsService.chosenMovie({
+        sessionId,
+        votes,
+      });
+
       this.sendUpdateToClients(sessionId, {
-        event: EventTypes.VOTED_MOVIE_EVENT,
-        data: votes,
+        event: EventTypes.CHOSEN_MOVIE_EVENT,
+        data: true,
       });
 
       return;
     }
 
-    return {
+    this.sendUpdateToClients(sessionId, {
       event: EventTypes.VOTED_MOVIE_EVENT,
       data: votes,
-    };
-  }
-
-  @SubscribeMessage(EventTypes.CHOSEN_MOVIE_EVENT)
-  async onChosen(client: any, data: any): Promise<void> {
-    const { sessionId, movieId } = data;
-
-    const movie = await this.eventsService.chosenMovie({
-      sessionId,
-      movieId,
-    });
-
-    return this.sendUpdateToClients(sessionId, {
-      event: EventTypes.CHOSEN_MOVIE_EVENT,
-      data: movie,
     });
   }
 }
