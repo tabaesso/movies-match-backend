@@ -10,7 +10,7 @@ import { Logger } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { getWSParams } from 'src/utils/getWSParams';
 
-@WebSocketGateway()
+@WebSocketGateway(8080)
 export class EventsGateway {
   constructor(private readonly eventsService: EventsService) {}
   private readonly logger = new Logger(EventsGateway.name);
