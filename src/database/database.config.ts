@@ -13,8 +13,8 @@ export const databaseConfig: DataSourceOptions = {
   username: `postgres`,
   password: `postgres`,
   database: `postgres`,
-  // entities: [User, Session, SessionGenres, SessionMembers, SessionVotes],
-  entities: [__dirname + '/../**/*.entity.{.ts,.js}'],
+  entities: [User, Session, SessionGenres, SessionMembers, SessionVotes],
+  // entities: [__dirname + '/../**/*.entity.{.ts,.js}'],
   migrations: [__dirname + '/../**/migrations/*{.ts,.js}'],
   synchronize: false,
 };
